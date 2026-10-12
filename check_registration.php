@@ -16,15 +16,18 @@ else{
     $username = $_POST['username'];
     $password = $_POST['pass'];
 
+    $sql1 = mysqli_prepare($connection, "SELECT users_username, users_password FROM users WHERE users_username = ? AND users_password = ?");
+    mysqli_stmt_bind_param($sql1, "ss", $username, $password);
+    mysqli_stmt_execute($sql1);
+    mysqli_stmt_close($sql1);
 
-    $sql1 = "SELECT users_username, users_password FROM users WHERE users_username = '{$username}' AND users_password = '{$password}'";
     $stmt = mysqli_prepare($connection, "INSERT INTO users (users_username, users_password) VALUES (?, ?)");
     mysqli_stmt_bind_param($stmt, "ss", $username, $password);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
     $result1 = mysqli_query ($connection, $sql1) or die (mysqli_error ($connection));
-    
+
     if (mysqli_num_rows ($result1) == 0){
         if ($stmt){
             include 'includes/new_registration.php';
